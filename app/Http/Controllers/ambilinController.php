@@ -1050,12 +1050,15 @@ class ambilinController extends BaseController
         $ambilin = DB::table('ambilin')->where('id', $id_ambilin)->first();
         $barang = DB::table('uns_berat')->where('id_ambilin', $ambilin->id)
             ->join('waste_cat', 'waste_cat.id', '=', 'uns_berat.id_sampah')
-            ->select('uns_berat.*', 'waste_cat.id as id_sampah', 'waste_cat.nama')
+            ->select('uns_berat.*', 'waste_cat.id as id_sampah', 'waste_cat.nama', 'waste_cat.harga_down', 'waste_cat.harga_top')
             ->get();
         $kat_user_pemilik = User::where('id', $ambilin->wp_id)->first();
-        $jenis = DB::table('waste_cat')
+        $jenis_sampah = DB::table('waste_cat')
         ->where('aktif', '1')
         ->where('kat_user', $kat_user_pemilik->kat_user)->get();
+        $jenis_sampah_kolektor = DB::table('waste_cat')
+        ->where('aktif', '1')
+        ->where('kat_user', 2)->get();
         // dd($jenis);
         $epr = DB::table('uns_sampah-merek')
             ->join('uns_sampah', 'uns_sampah.id', 'uns_sampah-merek.sampah_id')
@@ -1067,13 +1070,14 @@ class ambilinController extends BaseController
             ->select('uns_sampah-merek.id as id', 'uns_sampah.nama as jenis', 'uns_merek.merek as merek', 'uns_perusahaan_induk.nama as induk')
             ->get();
         // dd($ambilin, $barang);
-        return view('ambilin_verifikasi', compact('epr', 'ambilin', 'barang', 'jenis', 'page', 'back', 'id_ambilin', 'id_booking','backslug'));
+        return view('ambilin_verifikasi', compact('epr', 'ambilin', 'barang', 'jenis_sampah', 'jenis_sampah_kolektor', 'page', 'back', 'id_ambilin', 'id_booking','backslug'));
     }
 
     public function ambilin_verifikasi_post(Request $request, $id_ambilin, $id_booking) //kolektor
     {
         $request->validate([
             'barang.*.id_berat' => 'nullable',
+            'barang.*.id_sampah' => 'nullable|numeric',
             'barang.*.berat_riil' => 'nullable|numeric',
             'barang.*.harga_riil' => 'nullable|numeric',
             'tambah.*.id_sampah' => 'nullable',
@@ -1090,6 +1094,7 @@ class ambilinController extends BaseController
         // if ($request->barang != null) {
             foreach ($request->barang as $key => $barang) {
                 $berat              = Berat::find($barang['id_berat']);
+                $berat->id_sampah   = $barang['id_sampah'];
                 $berat->berat_riil  = $barang['berat_riil'];
                 $berat->harga_riil  = $barang['harga_riil'];
                 $berat->save();

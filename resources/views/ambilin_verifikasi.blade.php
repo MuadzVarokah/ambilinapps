@@ -29,13 +29,25 @@
                                             <td style="width:25%; text-align: center;"><label class="form-label" for="berat" style="margin: 0; font-size: 80%; white-space: nowrap;">Harga (Rp.)</label></td>
                                         </tr>
                                         {{-- {{dd($barang)}} --}}
-                                        <?php $a = -1; ?>
+                                        @php $a = -1; @endphp
                                         @foreach ($barang as $brg)
-                                        <?php $a++; ?>
+                                        @php
+                                            $a++;
+                                            $rerata = ($brg->harga_down + $brg->harga_top)/2;
+                                        @endphp
                                         {{-- {{dd($brg->id)}} --}}
                                             <tr>
                                                 <input type="hidden" name="barang[{{$a}}][id_berat]" value="{{ $brg->id }}">
-                                                <td class="align-middle input-group-sm"><input type="text" class="form-control" value="{{ $brg->nama }}" style="font-size: 80%;" disabled></td>
+                                                {{-- <td class="align-middle input-group-sm"><input type="text" class="form-control" value="{{ $brg->nama }}" style="font-size: 80%;" disabled></td> --}}
+                                                <td class="align-middle input-group-sm">
+                                                    <select class='form-select' name='barang[{{$a}}][id_sampah]' style='font-size: 80%; height: 100%;' required>
+                                                        @foreach($jenis_sampah as $jns)
+                                                        <option value='{{$jns->id}}' style='font-size: 80%' @if($brg->id_sampah == $jns->id) selected @endif>
+                                                            {{$jns->nama}}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
                                                 <td class="align-middle input-group-sm">
                                                     <input type="number" name="barang[{{$a}}][berat_riil]" id="barang[{{$a}}][berat_riil]" class="form-control"
                                                         style="font-size: 80%; text-align: center; background-color: white;" value="{{ $brg->berat }}"
@@ -47,7 +59,8 @@
                                                     <input type="number" name="barang[{{$a}}][harga_riil]" id="barang[{{$a}}][harga_riil]" class="form-control"
                                                         style="font-size: 80%; text-align: center; background-color: white;"
                                                         pattern="/^d+\.?\d*$/" onKeyPress="if(this.value.length==6) return false;"
-                                                        maxlength="6" placeholder="Harga" required min="100" max="100000"/>
+                                                        maxlength="6" placeholder="Harga" required min="100" max="100000"
+                                                        value="{{ $rerata }}"/>
                                                 </td>
                                                 <script>
                                                     // $("input[type='number']").inputSpinner();
@@ -103,7 +116,7 @@
                                                 <td class="align-middle input-group">
                                                     <select class="form-select" name="tambah[0][id_sampah]" style="font-size: 80%; height: 100%;">
                                                     <option value="" style="font-size: 80%;"> Pilih Sampah </option>
-                                                        @foreach($jenis as $jns)
+                                                        @foreach($jenis_sampah as $jns)
                                                         <option value="{{$jns->id}}" {{ ((null !== old('tambah[0][id_sampah]')) && old('tambah[0][id_sampah]') == $jns->id) ? "selected=\"selected\"" : "" }} style="font-size: 80%">{{$jns->nama}}</option>
                                                         @endforeach
                                                     </select>
@@ -130,7 +143,7 @@
                                                         <div class="col-11 align-middle input-group-sm" style="padding: 10px 0 0 0;">
                                                             <select class="form-select" name="tambah[0][id_sampah]" style="font-size: 80%; height: 100%;">
                                                                 <option value="" style="font-size: 80%"> Pilih jenis sampah </option>
-                                                                    @foreach($jenis as $jns)
+                                                                    @foreach($jenis_sampah as $jns)
                                                                     <option value="{{$jns->id}}" {{ ((null !== old('id_sampah')) && old('id_sampah') == $jns->id) ? "selected=\"selected\"" : "" }} style="font-size: 80%">{{$jns->nama}}</option>
                                                                     @endforeach
                                                                 </select>
@@ -164,8 +177,8 @@
                                            
                                                 ++i;
                                            
-                                                $("#dynamicTable").append("<tr><td class='align-middle input-group'><select class='form-select' name='tambah["+i+"][id_sampah]' style='font-size: 80%; height: 100%;' required><option value='' style='font-size: 80%;''> Pilih Sampah </option>@foreach($jenis as $jns)<option value='{{$jns->id}}' {{{ ((null !== old('tambah["+i+"][id_sampah]')) && old('tambah["+i+"][id_sampah]') == $jns->id) ? 'selected=\'selected\'' : '' }}} style='font-size: 80%''>{{$jns->nama}}</option>@endforeach</select></td><td class='align-middle input-group-sm'><input type='number' min='0.1' name='tambah["+i+"][berat]' class='form-control'minlength='1' maxlength='6' data-decimals='2' max='1000' step='0.1'pattern='/^-?\d+\.?\d*$/'' onKeyPress='if(this.value.length==4) return false;'style='background-color:white; text-align: center; font-size: 80%;' value='{{ old('tambah["+i+"][berat]') }}'' placeholder='berat' required /></td><td class='align-middle input-group-sm'><input type='number' name='tambah["+i+"][harga_riil]' id='tambah["+i+"][harga_riil]'' class='form-control' style='font-size: 80%; text-align: center; background-color: white;' pattern='/^-?\d+\.?\d*$/'' onKeyPress='if(this.value.length==6) return false;' maxlength='6' placeholder='Harga' min='100' max='100000' required /></td><td class='align-middle text-center input-group-sm'><button type='button' class='btn btn-danger remove-tr' name='remove-tr' id='remove-tr' style='font-size: 80%'><i class='fa-solid fa-xmark'></i></button></td></tr>");
-                                                // $("#dynamicTable").append("<tr><td><select class='form-select' name='tambah["+i+"][id_sampah]' style='font-size: 80%'><option value='' style='font-size: 80%'> Pilih jenis sampah </option><?php foreach($jenis as $jns){?><option value='{{$jns->id}}' {{ ((null !== old('id_sampah')) && old('id_sampah') == $jns->id) ? 'selected=\'selected\'' : '' }} style='font-size: 80%'>{{$jns->nama}}</option><?php } ?></select></td><td><input type='text' min='1' name='tambah["+i+"][berat]' class='form-control' minlength='1' maxlength='6' onkeypress='return hanyaAngka(event)' style='background-color:white; text-align: center; font-size: 80%' value='{{ old("berat") }}' placeholder='berat...' /></td><td class='align-middle text-center'><button type='button' class='btn btn-danger remove-tr' name='remove-tr' id='remove-tr' style='font-size: 80%'><i class='fa-solid fa-xmark'></i></button></td></tr>");
+                                                $("#dynamicTable").append("<tr><td class='align-middle input-group'><select class='form-select' name='tambah["+i+"][id_sampah]' style='font-size: 80%; height: 100%;' required><option value='' style='font-size: 80%;''> Pilih Sampah </option>@foreach($jenis_sampah_kolektor as $jns_kol)<option value='{{$jns_kol->id}}' {{{ ((null !== old('tambah["+i+"][id_sampah]')) && old('tambah["+i+"][id_sampah]') == $jns_kol->id) ? 'selected=\'selected\'' : '' }}} style='font-size: 80%''>{{$jns_kol->nama}}</option>@endforeach</select></td><td class='align-middle input-group-sm'><input type='number' min='0.1' name='tambah["+i+"][berat]' class='form-control'minlength='1' maxlength='6' data-decimals='2' max='1000' step='0.1'pattern='/^-?\d+\.?\d*$/'' onKeyPress='if(this.value.length==4) return false;'style='background-color:white; text-align: center; font-size: 80%;' value='{{ old('tambah["+i+"][berat]') }}'' placeholder='berat' required /></td><td class='align-middle input-group-sm'><input type='number' name='tambah["+i+"][harga_riil]' id='tambah["+i+"][harga_riil]'' class='form-control' style='font-size: 80%; text-align: center; background-color: white;' pattern='/^-?\d+\.?\d*$/'' onKeyPress='if(this.value.length==6) return false;' maxlength='6' placeholder='Harga' min='100' max='100000' required /></td><td class='align-middle text-center input-group-sm'><button type='button' class='btn btn-danger remove-tr' name='remove-tr' id='remove-tr' style='font-size: 80%'><i class='fa-solid fa-xmark'></i></button></td></tr>");
+                                                // $("#dynamicTable").append("<tr><td><select class='form-select' name='tambah["+i+"][id_sampah]' style='font-size: 80%'><option value='' style='font-size: 80%'> Pilih jenis sampah </option><?php foreach($jenis_sampah as $jns){?><option value='{{$jns->id}}' {{ ((null !== old('id_sampah')) && old('id_sampah') == $jns->id) ? 'selected=\'selected\'' : '' }} style='font-size: 80%'>{{$jns->nama}}</option><?php } ?></select></td><td><input type='text' min='1' name='tambah["+i+"][berat]' class='form-control' minlength='1' maxlength='6' onkeypress='return hanyaAngka(event)' style='background-color:white; text-align: center; font-size: 80%' value='{{ old("berat") }}' placeholder='berat...' /></td><td class='align-middle text-center'><button type='button' class='btn btn-danger remove-tr' name='remove-tr' id='remove-tr' style='font-size: 80%'><i class='fa-solid fa-xmark'></i></button></td></tr>");
                                             });
                                            
                                             $(document).on('click', '.remove-tr', function(){  

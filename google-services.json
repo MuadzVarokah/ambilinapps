@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "929107703499",
+    "project_id": "ambilin-indonesia",
+    "storage_bucket": "ambilin-indonesia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929107703499:android:3d8daf1b38034516b84d4e",
+        "android_client_info": {
+          "package_name": "com.ambilin.indonesia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "929107703499-lssd7r4j20seloa23jlolg8s4odp1nu8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxJZW1zcskw5ed8TecTkEoml7cQYbvJ9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "929107703499-lssd7r4j20seloa23jlolg8s4odp1nu8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

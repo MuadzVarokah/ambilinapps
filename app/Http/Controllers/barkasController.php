@@ -406,7 +406,7 @@ class barkasController extends BaseController
             $sebar->save();
 
             Sebar_laku::create([
-                'paskas_id'     => $id,
+                'sebar_id'      => $id,
                 'keterangan'    => $request->keterangan,
                 'waktu_catat'   => $now,
             ]);
